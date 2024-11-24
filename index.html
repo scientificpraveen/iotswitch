@@ -15,7 +15,7 @@
             var currentState = document.getElementById(pin).innerText;
             var newState = (currentState === 'OFF') ? 'on' : 'off';
             
-            fetch('http://167.71.237.12:5000/pins/' + pin, {
+            fetch('http://167.71.237.12/pins/' + pin, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
