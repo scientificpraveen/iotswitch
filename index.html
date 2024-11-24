@@ -1,58 +1,41 @@
-const http = require('http');
-const url = require('url');
-
-// Define the initial state of the pins (D4 - D7)
-let pinsState = {
-  D4: false,
-  D5: false,
-  D6: false,
-  D7: false
-};
-
-// Create an HTTP server
-const server = http.createServer((req, res) => {
-  const { method, pathname, query } = req;
-
-  if (pathname === '/pins' && method === 'GET') {
-    // Return the current state of all pins as JSON
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(pinsState));
-
-  } else if (pathname.startsWith('/pins/') && method === 'PUT') {
-    // Extract pin from URL
-    const pin = pathname.split('/')[2];
-    
-    if (pinsState.hasOwnProperty(pin)) {
-      let body = '';
-      req.on('data', chunk => {
-        body += chunk;
-      });
-
-      req.on('end', () => {
-        const state = JSON.parse(body).state;
-        if (state === 'on' || state === 'off') {
-          // Update the pin state
-          pinsState[pin] = state === 'on';
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ message: `Pin ${pin} is now ${state}` }));
-        } else {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ message: 'Invalid state. Use "on" or "off".' }));
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control NodeMCU Pins</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        button { margin: 10px; padding: 15px; font-size: 20px; cursor: pointer; background-color: #4CAF50; color: white; border: none; border-radius: 5px; }
+        button:hover { background-color: #45a049; }
+    </style>
+    <script>
+        // Function to toggle pin state by sending a PUT request to the server
+        function togglePin(pin) {
+            var currentState = document.getElementById(pin).innerText;
+            var newState = (currentState === 'OFF') ? 'on' : 'off';
+            
+            fetch('http://167.71.237.12:5000/pins/' + pin, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ state: newState })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                document.getElementById(pin).innerText = (newState === 'on') ? 'ON' : 'OFF'; // Update button text
+            })
+            .catch(error => console.error('Error:', error));
         }
-      });
-    } else {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'Invalid pin.' }));
-    }
-
-  } else {
-    // Return 404 for any other routes
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: 'Not Found' }));
-  }
-});
-
-// Start the server
-server.listen(5000, () => {
-  console.log('Server running at http://167.71.237.12:5000');
-});
+    </script>
+</head>
+<body>
+    <h1>Control NodeMCU Pins (D4 - D7)</h1>
+    <button id="D4" onclick="togglePin('D4')">OFF</button><br><br>
+    <button id="D5" onclick="togglePin('D5')">OFF</button><br><br>
+    <button id="D6" onclick="togglePin('D6')">OFF</button><br><br>
+    <button id="D7" onclick="togglePin('D7')">OFF</button><br><br>
+</body>
+</html>
