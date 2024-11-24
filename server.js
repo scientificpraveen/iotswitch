@@ -53,6 +53,6 @@ const server = http.createServer((req, res) => {
 });
 
 // Start the server
-server.listen(5000, () => {
-  console.log('Server running at http://167.71.237.12:5000');
+server.listen(80, () => {
+  console.log('Server running at http://167.71.237.12');
 });
