@@ -1,33 +1,32 @@
 from flask import Flask, jsonify
-import RPi.GPIO as GPIO
+import requests
 
 app = Flask(__name__)
 
-# Set up GPIO (Use GPIO 17 on Raspberry Pi or similar for NodeMCU)
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(17, GPIO.OUT)  # You can change this to match your GPIO pin
+# NodeMCU API endpoint (this will send a request back to NodeMCU to toggle a pin)
+Nodemcu_url = "http://<nodemcu-ip>/toggle"  # Replace <nodemcu-ip> with the actual IP of the NodeMCU
 
 @app.route('/api/togglePin', methods=['GET'])
 def toggle_pin():
-    # Read current pin state
-    pin_state = GPIO.input(17)
-    
-    # Toggle the pin state (HIGH -> LOW, LOW -> HIGH)
-    GPIO.output(17, not pin_state)
-    
-    # Return the new state of the pin as JSON response
-    return jsonify({
-        "message": "Pin state toggled successfully",
-        "new_pin_state": "HIGH" if GPIO.input(17) else "LOW"
-    }), 200
-
-@app.route('/api/getPinState', methods=['GET'])
-def get_pin_state():
-    # Return the current state of the pin
-    pin_state = GPIO.input(17)
-    return jsonify({
-        "pin_state": "HIGH" if pin_state else "LOW"
-    }), 200
+    try:
+        # Send request to NodeMCU to toggle pin (replace with real NodeMCU IP)
+        response = requests.get(Nodemcu_url)
+        
+        if response.status_code == 200:
+            return jsonify({
+                "message": "Pin state toggled successfully",
+                "status": "success"
+            }), 200
+        else:
+            return jsonify({
+                "message": "Failed to toggle pin on NodeMCU",
+                "status": "error"
+            }), 500
+    except Exception as e:
+        return jsonify({
+            "message": f"Error: {str(e)}",
+            "status": "error"
+        }), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)  # Make it accessible on port 80
+    app.run(host='0.0.0.0', port=80)  # Run Flask on port 80
