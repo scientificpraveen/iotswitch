@@ -1,103 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Device Control Web App</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 20px;
-    }
-    h1 {
-      color: #333;
-    }
-    .switch-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .switch {
-      margin: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 300px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .status {
-      margin-top: 20px;
-      color: green;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control NodeMCU Pins</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        button {
+            margin: 10px;
+            padding: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script>
+        // Function to toggle pin state by sending GET request to the NodeMCU
+        function togglePin(pin) {
+            var currentState = document.getElementById(pin).innerText;
+            var newState = (currentState === 'OFF') ? 'on' : 'off';
+            fetch(`http://<NODEMCU_IP>/toggle?pin=${pin}&state=${newState}`)
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);  // Log the response
+                    document.getElementById(pin).innerText = (newState === 'on') ? 'ON' : 'OFF';  // Update the button text
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
 </head>
 <body>
-  <h1>Device Control Panel</h1>
-  <div class="switch-container">
-    <!-- Switches -->
-    <div class="switch">
-      <span>Switch 1</span>
-      <button onclick="toggleSwitch(1, this)">OFF</button>
-    </div>
-    <div class="switch">
-      <span>Switch 2</span>
-      <button onclick="toggleSwitch(2, this)">OFF</button>
-    </div>
-    <div class="switch">
-      <span>Switch 3</span>
-      <button onclick="toggleSwitch(3, this)">OFF</button>
-    </div>
-    <div class="switch">
-      <span>Switch 4</span>
-      <button onclick="toggleSwitch(4, this)">OFF</button>
-    </div>
-    <div class="switch">
-      <span>Switch 5</span>
-      <button onclick="toggleSwitch(5, this)">OFF</button>
-    </div>
-  </div>
-  <p class="status" id="status"></p>
-
-  <script>
-    const serverUrl = "http://167.71.237.12:5000"; // Replace with your backend server IP and port
-
-    // Function to toggle switch state
-    function toggleSwitch(switchId, button) {
-      const currentState = button.textContent === "ON" ? 1 : 0;
-      const newState = currentState === 1 ? 0 : 1;
-
-      // Update button text
-      button.textContent = newState === 1 ? "ON" : "OFF";
-
-      // Prepare payload
-      const payload = {
-        switch: switchId,
-        state: newState
-      };
-
-      // Send data to backend server
-      fetch(serverUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log("Server response:", data);
-          document.getElementById("status").textContent = ⁠ Switch ${switchId} set to ${newState === 1 ? "ON" : "OFF"} ⁠;
-        })
-        .catch(error => {
-          console.error("Error:", error);
-          document.getElementById("status").textContent = "Failed to communicate with the server.";
-        });
-    }
-  </script>
+    <h1>Control NodeMCU Pins (D4 - D7)</h1>
+    <button id="D4" onclick="togglePin('D4')">OFF</button><br><br>
+    <button id="D5" onclick="togglePin('D5')">OFF</button><br><br>
+    <button id="D6" onclick="togglePin('D6')">OFF</button><br><br>
+    <button id="D7" onclick="togglePin('D7')">OFF</button><br><br>
 </body>
 </html>
