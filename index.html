@@ -1,41 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control NodeMCU Pins</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        button { margin: 10px; padding: 15px; font-size: 20px; cursor: pointer; background-color: #4CAF50; color: white; border: none; border-radius: 5px; }
-        button:hover { background-color: #45a049; }
-    </style>
-    <script>
-        // Function to toggle pin state by sending a PUT request to the server
-        function togglePin(pin) {
-            var currentState = document.getElementById(pin).innerText;
-            var newState = (currentState === 'OFF') ? 'on' : 'off';
-            
-            fetch('http://167.71.237.12/pins/' + pin, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ state: newState })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                document.getElementById(pin).innerText = (newState === 'on') ? 'ON' : 'OFF'; // Update button text
-            })
-            .catch(error => console.error('Error:', error));
-        }
-    </script>
+  <title>Relay Control</title>
+  <script>
+    async function controlRelay(state) {
+      const ip = "167.71.237.12";
+      const url = `http://${ip}/relay?state=${state}`;
+      try {
+        const response = await fetch(url);
+        const result = await response.text();
+        alert(result);
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to send the command.");
+      }
+    }
+  </script>
 </head>
 <body>
-    <h1>Control NodeMCU Pins (D4 - D7)</h1>
-    <button id="D4" onclick="togglePin('D4')">OFF</button><br><br>
-    <button id="D5" onclick="togglePin('D5')">OFF</button><br><br>
-    <button id="D6" onclick="togglePin('D6')">OFF</button><br><br>
-    <button id="D7" onclick="togglePin('D7')">OFF</button><br><br>
+  <h1>Relay Control</h1>
+  <button onclick="controlRelay('ON')">Turn ON</button>
+  <button onclick="controlRelay('OFF')">Turn OFF</button>
 </body>
 </html>
