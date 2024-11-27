@@ -4,10 +4,13 @@
   <title>Relay Control</title>
   <script>
     async function controlRelay(state) {
-      const ip = "167.71.237.12";
-      const url = `http://${ip}/relay?state=${state}`;
+      const url = "http://167.71.237.12/set-relay"; // DigitalOcean server URL
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ state }),
+        });
         const result = await response.text();
         alert(result);
       } catch (error) {
