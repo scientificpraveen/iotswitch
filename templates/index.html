@@ -3,34 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IoT Switch</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>IoT Switch Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 50px;
+            background-color: #f4f4f4;
+        }
+        .switch-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .switch {
+            display: inline-block;
+            position: relative;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            content: "";
+            position: absolute;
+            height: 26px;
+            width: 26px;
+            border-radius: 50%;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
 </head>
 <body>
-    <h1>Toggle Switch</h1>
-    <label for="switch">Switch State:</label>
-    <input type="checkbox" id="switch" name="switch" 
-        onchange="toggleSwitch(this.checked)" 
-        {{ 'checked' if switch_state == 'on' else '' }}>
-    <p>Current State: <span id="state-display">{{ switch_state }}</span></p>
 
-    <script>
-        function toggleSwitch(state) {
-            // Send POST request to update the state
-            const switchState = state ? 'on' : 'off';
-            $.ajax({
-                url: '/toggle',
-                type: 'POST',
-                data: { state: switchState },
-                success: function (response) {
-                    console.log(response);
-                    document.getElementById('state-display').textContent = switchState;
-                },
-                error: function (error) {
-                    console.error("Error toggling switch:", error);
-                }
-            });
-        }
-    </script>
+<h1>IoT Switch Control</h1>
+<p>Toggle the switch to update the state.</p>
+
+<!-- Switch Toggle -->
+<div class="switch-container">
+    <label class="switch">
+        <input type="checkbox" id="switch-toggle" {{ 'checked' if switch_state == 'on' else '' }}>
+        <span class="slider"></span>
+    </label>
+</div>
+
+<p class="status">Current State: <span id="state-display">{{ switch_state }}</span></p>
+
+<!-- JavaScript -->
+<script>
+    document.getElementById('switch-toggle').addEventListener('change', function() {
+        const switchState = this.checked ? 'on' : 'off';
+        
+        // Update the state on the page
+        document.getElementById('state-display').textContent = switchState;
+
+        // Send the new state to the server via POST
+        fetch('/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ state: switchState })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log('State updated successfully');
+            } else {
+                console.error('Error updating state:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+
 </body>
 </html>
