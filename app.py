@@ -19,11 +19,7 @@ def index():
 
 @app.route('/get_state', methods=['GET'])
 def get_state():
-    """Return the current switch state."""
-    def get_state():
-    """Return the current switch state."""
     return jsonify({"1": switch_state["switch_state"]})
-
 
 if __name__ == '__main__':
     # Start the Flask app on port 4000
