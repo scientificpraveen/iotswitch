@@ -42,8 +42,7 @@ def toggle_switch():
 def get_state():
     """Return the current switch state as 1 for on, 0 for off."""
     return jsonify({
-        "switch_id": switch_state["switch_id"], 
-        "switch_state": 1 if switch_state["switch_state"] == "on" else 0
+        switch_state["switch_id"] : 1 if switch_state["switch_state"] == "on" else 0
     })
 
 if __name__ == '__main__':
