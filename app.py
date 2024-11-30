@@ -16,6 +16,7 @@ def index():
     """Serve the HTML page with the current toggle state."""
     return render_template('index.html', switch_state=switch_state["switch_state"])
 
+@app.route('/toggle', methods=['POST'])
 def toggle_switch():
     """Handle switch toggling and send the updated state."""
     global switch_state
