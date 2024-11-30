@@ -9,7 +9,7 @@ SERVER_PORT = "80"
 POST_URL = f"{SERVER_IP}:{SERVER_PORT}/api/receive"
 
 # State storage (initial state of the switch)
-switch_state = {"1": "0"}
+switch_state = {"switch_id": "1", "switch_state": "0"}
 
 @app.route('/')
 def index():
@@ -20,7 +20,10 @@ def index():
 @app.route('/get_state', methods=['GET'])
 def get_state():
     """Return the current switch state."""
-    return jsonify({switch_state["0"]: switch_state["1"]})
+    def get_state():
+    """Return the current switch state."""
+    return jsonify({"1": switch_state["switch_state"]})
+
 
 if __name__ == '__main__':
     # Start the Flask app on port 4000
