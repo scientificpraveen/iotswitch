@@ -20,18 +20,16 @@ def index():
 def toggle_switch():
     """Handle switch toggling and send the updated state."""
     global switch_state
-    # Get the state from the JSON body
-    data = request.json  # Expecting JSON in the request body
+
+    # Read JSON data from the request
+    data = request.get_json()
     switch_state["switch_state"] = data.get("state", "off")
     payload = {"switch_id": switch_state["switch_id"], "switch_state": switch_state["switch_state"]}
 
     try:
-        # Sending the payload to another server or processing it
         response = requests.post(POST_URL, json=payload)
-        # Return success with the response from the POST request
         return jsonify({"status": "success", "response": response.text, "switch_state": switch_state["switch_state"]}), response.status_code
     except requests.exceptions.RequestException as e:
-        # Return error if the POST request failed
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/get_state', methods=['GET'])
