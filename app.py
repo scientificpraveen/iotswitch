@@ -41,5 +41,11 @@ def send_payload():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/get_state', methods=['GET'])
+def get_state():
+    """Return the current switch state."""
+    return jsonify({"switch_id": switch_state["switch_id"], "switch_state": switch_state["switch_state"]})
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000)  # Flask app runs on port 4000
