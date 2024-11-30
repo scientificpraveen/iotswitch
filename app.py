@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import requests
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='/var/www/html/iotswitch/templates')
 
 # Server Configuration
 SERVER_IP = "http://167.71.237.12"
@@ -41,4 +41,4 @@ def send_payload():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=4000)  # Flask runs on port 4000
+    app.run(host='0.0.0.0', port=4000)  # Flask app runs on port 4000
