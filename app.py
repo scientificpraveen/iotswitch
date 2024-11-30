@@ -17,8 +17,8 @@ def index():
     return render_template('index.html', switch_state=switch_state["switch_state"])
 
 @app.route('/toggle', methods=['POST'])
-def toggle_switch():
-    """Handle switch toggling and send the updated state."""
+"""def toggle_switch():
+
     global switch_state
     
     # Attempt to read JSON data from the request
@@ -29,20 +29,20 @@ def toggle_switch():
 
         # Get the new state from the JSON payload
         switch_state["switch_state"] = data.get("state", "off")
-        payload = {"switch_id": switch_state["switch_id"], "switch_state": switch_state["switch_state"]}
+        payload = {"switch_id": switch_state["1"], "switch_state": switch_state["switch_state"]}
 
         # Send updated state to another server
         response = requests.post(POST_URL, json=payload)
 
         return jsonify({"status": "success", "switch_state": switch_state["switch_state"], "response": response.text}), 200
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"status": "error", "message": str(e)}), 500"""
         
 
 @app.route('/get_state', methods=['GET'])
 def get_state():
     """Return the current switch state."""
-    return jsonify({switch_state["switch_id"]: switch_state["switch_state"]})
+    return jsonify({switch_state[0]: switch_state[1]})
 
 if __name__ == '__main__':
     # Start the Flask app on port 4000
