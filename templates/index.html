@@ -80,7 +80,7 @@
         // Update the state on the page
         document.getElementById('state-display').textContent = switchState;
 
-        // Send the new state to the server via AJAX POST using fetch
+        // Send the new state to the server via POST (AJAX)
         fetch('/toggle', {
             method: 'POST',
             headers: {
@@ -92,7 +92,6 @@
         .then(data => {
             if (data.status === 'success') {
                 console.log('State updated successfully');
-                // Optionally update any additional elements or perform actions after success
             } else {
                 console.error('Error updating state:', data.message);
             }
