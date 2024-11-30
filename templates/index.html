@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Switch</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Toggle Switch</h1>
+    <label for="switch">Switch State:</label>
+    <input type="checkbox" id="switch" name="switch" 
+        onchange="toggleSwitch(this.checked)" 
+        {{ 'checked' if switch_state == 'on' else '' }}>
+    <p>Current State: <span id="state-display">{{ switch_state }}</span></p>
+
+    <script>
+        function toggleSwitch(state) {
+            // Send POST request to update the state
+            const switchState = state ? 'on' : 'off';
+            $.ajax({
+                url: '/toggle',
+                type: 'POST',
+                data: { state: switchState },
+                success: function (response) {
+                    console.log(response);
+                    document.getElementById('state-display').textContent = switchState;
+                },
+                error: function (error) {
+                    console.error("Error toggling switch:", error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
