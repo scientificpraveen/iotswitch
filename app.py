@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import requests
 
-app = Flask(__name__)
 app = Flask(__name__, template_folder='/var/www/html/iotswitch/templates')
 
 # Server Configuration
