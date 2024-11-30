@@ -42,7 +42,7 @@ def toggle_switch():
 @app.route('/get_state', methods=['GET'])
 def get_state():
     """Return the current switch state."""
-    return jsonify({"switch_id": switch_state["switch_id"], "switch_state": switch_state["switch_state"]})
+    return jsonify({switch_state["switch_id"]: switch_state["switch_state"]})
 
 if __name__ == '__main__':
     # Start the Flask app on port 4000
