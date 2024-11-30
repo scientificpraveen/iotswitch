@@ -101,7 +101,7 @@
     };
 
     document.getElementById('switch-toggle').addEventListener('change', function() {
-        const switchState = this.checked ? 'on' : 'off';
+        const switchState = this.checked ? '1' : '0';
         
         // Update the state on the page
         document.getElementById('state-display').textContent = switchState;
