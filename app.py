@@ -40,6 +40,13 @@ def toggle_switch():
     except requests.exceptions.RequestException as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/get_state', methods=['GET'])
+def get_state():
+    """
+    Return the current switch state as a JSON response.
+    """
+    return jsonify({"switch_id": switch_state["switch_id"], "switch_state": switch_state["switch_state"]})
+
 
 @app.route('/send_payload', methods=['GET'])
 def send_payload():
