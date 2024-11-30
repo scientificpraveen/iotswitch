@@ -1,28 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Relay Control</title>
-  <script>
-    async function controlRelay(state) {
-      const url = "http://167.71.237.12/set-relay"; // DigitalOcean server URL
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ state }),
-        });
-        const result = await response.text();
-        alert(result);
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Failed to send the command.");
-      }
-    }
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toggle Switch</title>
 </head>
 <body>
-  <h1>Relay Control</h1>
-  <button onclick="controlRelay('ON')">Turn ON</button>
-  <button onclick="controlRelay('OFF')">Turn OFF</button>
+    <h1>Toggle Switch</h1>
+    <form action="/toggle" method="POST" id="toggleForm">
+        <label for="switch">Switch:</label>
+        <input type="checkbox" id="switch" name="state" onchange="submitForm()" {{ 'checked' if switch_state == 'on' else '' }}>
+    </form>
+
+    <script>
+        function submitForm() {
+            const form = document.getElementById('toggleForm');
+            const switchInput = document.getElementById('switch');
+            const state = switchInput.checked ? 'on' : 'off';
+            const formData = new FormData();
+            formData.append('state', state);
+
+            fetch('/toggle', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+              .then(data => console.log(data))
+              .catch(error => console.error(error));
+        }
+    </script>
 </body>
 </html>
