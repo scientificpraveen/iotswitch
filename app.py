@@ -11,13 +11,9 @@ POST_URL = f"{SERVER_IP}:{SERVER_PORT}/api/receive"
 # State storage
 switch_state = {"switch_id": "1", "switch_state": "off"}
 
-
 @app.route('/')
 def index():
-    """
-    Serve the HTML page with the toggle switch.
-    Displays the current state of the switch.
-    """
+    """Serve HTML page with toggle switch."""
     return render_template('index.html', switch_state=switch_state["switch_state"])
 
 
