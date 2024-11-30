@@ -30,6 +30,7 @@ def toggle_switch():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
 @app.route('/send_payload', methods=['GET'])
 def send_payload():
     """Send POST payload when requested using GET method."""
