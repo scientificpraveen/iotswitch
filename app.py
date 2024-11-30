@@ -9,7 +9,7 @@ SERVER_PORT = "80"
 POST_URL = f"{SERVER_IP}:{SERVER_PORT}/api/receive"
 
 # State storage (initial state of the switch)
-switch_state = {"switch_id": "1", "switch_state": "off"}
+int switch_state = {"1": "0"}
 
 @app.route('/')
 def index():
