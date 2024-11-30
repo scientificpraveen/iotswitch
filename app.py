@@ -15,28 +15,6 @@ switch_state = {"1": "0"}
 def index():
     """Serve the HTML page with the current toggle state."""
     return render_template('index.html', switch_state=switch_state["switch_state"])
-
-@app.route('/toggle', methods=['POST'])
-"""def toggle_switch():
-
-    global switch_state
-    
-    # Attempt to read JSON data from the request
-    try:
-        data = request.get_json()
-        if data is None:
-            return jsonify({"status": "error", "message": "Invalid JSON"}), 400
-
-        # Get the new state from the JSON payload
-        switch_state["switch_state"] = data.get("state", "off")
-        payload = {"switch_id": switch_state["1"], "switch_state": switch_state["switch_state"]}
-
-        # Send updated state to another server
-        response = requests.post(POST_URL, json=payload)
-
-        return jsonify({"status": "success", "switch_state": switch_state["switch_state"], "response": response.text}), 200
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500"""
         
 
 @app.route('/get_state', methods=['GET'])
