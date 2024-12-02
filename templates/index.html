@@ -71,6 +71,7 @@
     <script>
         const toggleSwitch = document.getElementById('toggle-switch');
         const stateDisplay = document.getElementById('state-display');
+        let isManualChange = false; // Tracks if the toggle was manually changed
 
         // Polling function to get the current state
         function fetchState() {
@@ -79,9 +80,8 @@
                 .then(data => {
                     const currentState = Object.values(data)[0] === 1 ? 'on' : 'off';
 
-                    // Update the switch and display if the state changes
-                    if ((currentState === 'on' && !toggleSwitch.checked) ||
-                        (currentState === 'off' && toggleSwitch.checked)) {
+                    // Update the switch and display if not manually toggled
+                    if (!isManualChange) {
                         toggleSwitch.checked = currentState === 'on';
                         stateDisplay.textContent = currentState;
                     }
@@ -95,6 +95,7 @@
         // Event listener for manual toggle
         toggleSwitch.addEventListener('change', () => {
             const newState = toggleSwitch.checked ? 'on' : 'off';
+            isManualChange = true; // Set manual change flag
 
             // Update the state on the page
             stateDisplay.textContent = newState;
@@ -107,11 +108,20 @@
                 },
                 body: JSON.stringify({ state: newState }),
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Response:', data);
-            })
-            .catch(error => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        console.log('State updated successfully');
+                    } else {
+                        console.error('Error updating state:', data.message);
+                    }
+                    // Reset manual change flag after the server processes it
+                    isManualChange = false;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    isManualChange = false; // Reset manual change flag in case of error
+                });
         });
     </script>
 </body>
