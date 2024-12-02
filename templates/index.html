@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IoT Switch Control</title>
+    <title>ATLANWA Switch</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -58,7 +58,7 @@
     </style>
 </head>
 <body>
-    <h1>IoT Switch Control</h1>
+    <h1>ATLANWA Switch</h1>
     <p>Toggle the switch to update its state, or wait for automatic updates.</p>
 
     <div class="switch">
@@ -72,6 +72,7 @@
         const toggleSwitch = document.getElementById('toggle-switch');
         const stateDisplay = document.getElementById('state-display');
         let isManualChange = false; // Tracks if the toggle was manually changed
+        let lastState = ""; // Tracks the last state to prevent unnecessary server updates
 
         // Polling function to get the current state
         function fetchState() {
@@ -80,10 +81,11 @@
                 .then(data => {
                     const currentState = Object.values(data)[0] === 1 ? 'on' : 'off';
 
-                    // Update the switch and display if not manually toggled
-                    if (!isManualChange) {
+                    // Update the switch and display only if it's different from the last fetched state
+                    if (currentState !== lastState && !isManualChange) {
                         toggleSwitch.checked = currentState === 'on';
                         stateDisplay.textContent = currentState;
+                        lastState = currentState;
                     }
                 })
                 .catch(error => console.error('Error fetching state:', error));
@@ -112,15 +114,15 @@
                 .then(data => {
                     if (data.status === 'success') {
                         console.log('State updated successfully');
+                        lastState = newState; // Sync the last state
                     } else {
                         console.error('Error updating state:', data.message);
                     }
-                    // Reset manual change flag after the server processes it
-                    isManualChange = false;
+                    isManualChange = false; // Allow automatic updates again
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    isManualChange = false; // Reset manual change flag in case of error
+                    isManualChange = false; // Reset flag on error
                 });
         });
     </script>
