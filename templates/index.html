@@ -83,19 +83,22 @@
 <!-- JavaScript -->
 <script>
     // Get the initial state of the switch
-   window.onload = function() {
-    fetch('/get_state')
-        .then(response => response.json())
-        .then(data => {
-            // Update the toggle switch based on the current state from the server
-            const switchState = data.switch_state === 1 ? 'on' : 'off';
-            document.getElementById('state-display').textContent = switchState;
-            document.getElementById('switch-toggle').checked = (switchState === 'on');
-        })
-        .catch(error => {
-            console.error('Error fetching initial state:', error);
-        });
-};
+    window.onload = function() {
+        fetch('/get_state')
+            .then(response => response.json())
+            .then(data => {
+                // Update the toggle switch based on the current state from the server
+                document.getElementById('state-display').textContent = data.switch_state;
+                if (data.switch_state === 'on') {
+                    document.getElementById('switch-toggle').checked = true;
+                } else {
+                    document.getElementById('switch-toggle').checked = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching initial state:', error);
+            });
+    };
 
     document.getElementById('switch-toggle').addEventListener('change', function() {
         const switchState = this.checked ? 'on' : 'off';
