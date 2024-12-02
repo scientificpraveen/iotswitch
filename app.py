@@ -15,6 +15,10 @@ def index():
     """Serve the HTML page with the current toggle state."""
     return render_template('index.html', switch_state=switch_state["switch_state"])
 
+@app.route('/api/receive', methods=['POST'])
+def receive_data():
+    return jsonify({"status": "success", "message": "Data received"})
+
 @app.route('/toggle', methods=['POST'])
 def toggle_switch():
     """Handle switch toggling and send the updated state."""
