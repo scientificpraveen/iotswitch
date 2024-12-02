@@ -8,7 +8,6 @@ SERVER_IP = "http://167.71.237.12"
 SERVER_PORT = "80"
 POST_URL = f"{SERVER_IP}:{SERVER_PORT}/api/receive"
 
-# State storage (initial state of the switch)
 switch_state = {"switch_id": "1", "switch_state": "off"}
 
 @app.route('/')
@@ -20,14 +19,13 @@ def index():
 def toggle_switch():
     """Handle switch toggling and send the updated state."""
     global switch_state
-    data = request.json  # Expecting JSON in the request body
+    data = request.json
     
     if data and "state" in data:
         switch_state["switch_state"] = data["state"]
         payload = {"switch_id": switch_state["switch_id"], "switch_state": switch_state["switch_state"]}
 
         try:
-            # Sending the payload to another server or processing it
             response = requests.post(POST_URL, json=payload)
             # Return success with the response from the POST request
             return jsonify({"status": "success", "response": response.text, "switch_state": switch_state["switch_state"]}), response.status_code
@@ -40,7 +38,7 @@ def toggle_switch():
 @app.route('/get_state', methods=['GET'])
 def get_state():
     """Return the current switch state."""
-    return jsonify({"switch_id": switch_state["switch_id"], "switch_state": switch_state["switch_state"]})
+    return jsonify({switch_state["switch_id"] : switch_state["switch_state"]})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000, debug=True)
