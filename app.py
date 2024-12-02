@@ -38,7 +38,7 @@ def toggle_switch():
 @app.route('/get_state', methods=['GET'])
 def get_state():
     """Return the current switch state."""
-    return jsonify({switch_state["switch_id"] : switch_state["switch_state"]})
+    return jsonify({switch_state["switch_id"] : 1 if switch_state["switch_state"] == "on" else 0 })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000, debug=True)
