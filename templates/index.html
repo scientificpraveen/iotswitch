@@ -7,16 +7,16 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
+            padding: 50px;
             background-color: #f4f4f4;
-            padding: 20px;
+        }
+        .switch-container {
+            text-align: center;
+            margin-top: 50px;
         }
         .switch {
-            position: relative;
             display: inline-block;
-            width: 60px;
-            height: 34px;
-            margin-top: 20px;
+            position: relative;
         }
         .switch input {
             opacity: 0;
@@ -35,15 +35,15 @@
             border-radius: 34px;
         }
         .slider:before {
-            position: absolute;
             content: "";
+            position: absolute;
             height: 26px;
             width: 26px;
+            border-radius: 50%;
             left: 4px;
             bottom: 4px;
             background-color: white;
             transition: 0.4s;
-            border-radius: 50%;
         }
         input:checked + .slider {
             background-color: #2196F3;
@@ -58,45 +58,69 @@
     </style>
 </head>
 <body>
-    <h1>IoT Switch Control</h1>
-    <p>Toggle the switch to update its state.</p>
 
-    <div class="switch">
-        <input type="checkbox" id="toggle-switch" {% if switch_state == "on" %}checked{% endif %}>
+<h1>IoT Switch Control</h1>
+<p>Toggle the switch to update the state.</p>
+
+<!-- Switch Toggle -->
+<div class="switch-container">
+    <label class="switch">
+        <input type="checkbox" id="switch-toggle" {% if switch_state == "on" %}checked{% endif %}>
         <span class="slider"></span>
-    </div>
+    </label>
+</div>
 
-    <p class="status">Current State: <span id="state-display">{{ switch_state }}</span></p>
+<p class="status">Current State: <span id="state-display">{{ switch_state }}</span></p>
 
-    <script>
-        const toggleSwitch = document.getElementById('toggle-switch');
-        const stateDisplay = document.getElementById('state-display');
-
-        toggleSwitch.addEventListener('change', () => {
-            const newState = toggleSwitch.checked ? 'on' : 'off';
-
-            // Update the state on the page
-            stateDisplay.textContent = newState;
-
-            // Send the new state to the server
-            fetch('/toggle', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ state: newState }),
-            })
+<!-- JavaScript -->
+<script>
+    // Get the initial state of the switch
+    window.onload = function() {
+        fetch('/get_state')
             .then(response => response.json())
             .then(data => {
-                console.log('Response:', data);
+                // Update the toggle switch based on the current state from the server
+                document.getElementById('state-display').textContent = data.switch_state;
+                if (data.switch_state === 'on') {
+                    document.getElementById('switch-toggle').checked = true;
+                } else {
+                    document.getElementById('switch-toggle').checked = false;
+                }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Error fetching initial state:', error);
             });
+    };
+
+    document.getElementById('switch-toggle').addEventListener('change', function() {
+        const switchState = this.checked ? 'on' : 'off';
+        
+        // Update the state on the page
+        document.getElementById('state-display').textContent = switchState;
+
+        // Send the new state to the server via POST (AJAX)
+        fetch('/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ state: switchState })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log('State updated successfully');
+                // Update state display after successful change
+                document.getElementById('state-display').textContent = data.switch_state;
+            } else {
+                console.error('Error updating state:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>
-
-
-
