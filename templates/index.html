@@ -59,19 +59,40 @@
 </head>
 <body>
     <h1>IoT Switch Control</h1>
-    <p>Toggle the switch to update its state.</p>
+    <p>Toggle the switch to update its state, or wait for automatic updates.</p>
 
     <div class="switch">
-        <input type="checkbox" id="toggle-switch" {% if switch_state == "on" %}checked{% endif %}>
+        <input type="checkbox" id="toggle-switch">
         <span class="slider"></span>
     </div>
 
-    <p class="status">Current State: <span id="state-display">{{ switch_state }}</span></p>
+    <p class="status">Current State: <span id="state-display">off</span></p>
 
     <script>
         const toggleSwitch = document.getElementById('toggle-switch');
         const stateDisplay = document.getElementById('state-display');
 
+        // Polling function to get the current state
+        function fetchState() {
+            fetch('/get_state')
+                .then(response => response.json())
+                .then(data => {
+                    const currentState = Object.values(data)[0] === 1 ? 'on' : 'off';
+
+                    // Update the switch and display if the state changes
+                    if ((currentState === 'on' && !toggleSwitch.checked) ||
+                        (currentState === 'off' && toggleSwitch.checked)) {
+                        toggleSwitch.checked = currentState === 'on';
+                        stateDisplay.textContent = currentState;
+                    }
+                })
+                .catch(error => console.error('Error fetching state:', error));
+        }
+
+        // Periodically fetch the current state (every 2 seconds)
+        setInterval(fetchState, 2000);
+
+        // Event listener for manual toggle
         toggleSwitch.addEventListener('change', () => {
             const newState = toggleSwitch.checked ? 'on' : 'off';
 
@@ -90,9 +111,7 @@
             .then(data => {
                 console.log('Response:', data);
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+            .catch(error => console.error('Error:', error));
         });
     </script>
 </body>
