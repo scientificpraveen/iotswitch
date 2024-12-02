@@ -62,67 +62,38 @@
     <p>Toggle the switch to update its state.</p>
 
     <div class="switch">
-        <input type="checkbox" id="toggle-switch">
+        <input type="checkbox" id="toggle-switch" {% if switch_state == "on" %}checked{% endif %}>
         <span class="slider"></span>
     </div>
 
-    <p class="status">Current State: <span id="state-display">off</span></p>
+    <p class="status">Current State: <span id="state-display">{{ switch_state }}</span></p>
 
     <script>
         const toggleSwitch = document.getElementById('toggle-switch');
         const stateDisplay = document.getElementById('state-display');
 
-        // Function to fetch the current state from the server
-        async function fetchState() {
-            try {
-                const response = await fetch('/get_state');
-                const data = await response.json();
-                const serverState = Object.values(data)[0] === 1 ? 'on' : 'off';
-                
-                // Update the toggle switch UI if the state is different
-                if (serverState === 'on') {
-                    toggleSwitch.checked = true;
-                    stateDisplay.textContent = 'on';
-                } else {
-                    toggleSwitch.checked = false;
-                    stateDisplay.textContent = 'off';
-                }
-            } catch (error) {
-                console.error('Error fetching state:', error);
-            }
-        }
-
-        // Fetch the state periodically (every 2 seconds)
-        setInterval(fetchState, 2000);
-
-        // Handle manual toggle
-        toggleSwitch.addEventListener('change', async () => {
+        toggleSwitch.addEventListener('change', () => {
             const newState = toggleSwitch.checked ? 'on' : 'off';
+
+            // Update the state on the page
             stateDisplay.textContent = newState;
 
             // Send the new state to the server
-            try {
-                const response = await fetch('/toggle', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ state: newState }),
-                });
-
-                const data = await response.json();
-                if (data.status === 'success') {
-                    console.log('State updated successfully');
-                } else {
-                    console.error('Error updating state:', data.message);
-                }
-            } catch (error) {
+            fetch('/toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ state: newState }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response:', data);
+            })
+            .catch(error => {
                 console.error('Error:', error);
-            }
+            });
         });
-
-        // Fetch initial state on page load
-        window.onload = fetchState;
     </script>
 </body>
 </html>
